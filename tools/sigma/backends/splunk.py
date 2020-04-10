@@ -87,7 +87,6 @@ class SplunkBackend(SingleTextQueryBackend):
 
         except KeyError:    # no 'fields' attribute
             mapped = None
-            pass
 
         for parsed in sigmaparser.condparsed:
             query = self.generateQuery(parsed)
