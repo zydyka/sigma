@@ -18,7 +18,7 @@ import re
 from .base import SingleTextQueryBackend
 from .exceptions import NotSupportedError
 
-class WindowsDefenderATPBackend(SingleTextQueryBackend):
+class MicrosoftDefenderATPBackend(SingleTextQueryBackend):
     """Converts Sigma rule into Microsoft Defender ATP Hunting Queries."""
     identifier = "mdatp"
     active = True
