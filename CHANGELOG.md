@@ -11,6 +11,7 @@ from version 0.14.0.
 ### Added
 
 * LOGIQ Backend (logiq)
+* FortiSIEM backend
 
 ### Fixed
 

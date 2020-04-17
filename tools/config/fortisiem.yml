@@ -1,0 +1,48 @@
+title: FortiSIEM
+backends:
+  - fortisiem-query
+order: 20
+fieldmappings:
+    EventID: winEventId
+    AccessMask: AccessMask
+    AccountName: user
+    CommandLine: command
+    ComputerName: computer 
+    CurrentDirectory: dirName
+    Description: description
+    DestinationHostname: destName
+    DestinationIp: destIpAddr
+    DestinationPort: destIpPort
+    Details: details
+    EventType: eventType
+    FailureCode: winLogonFailCode
+    FileName: fileName
+    GroupName: groupName
+    Hashes: hashCode
+    HostVersion: version
+    Image: imageName    
+    ImagePath: filePath
+    IpAddress: hostIpAddr
+    LogonType: winLogonType
+    NewProcessName: procName
+    ObjectName: osObjName
+    ObjectType: osObjType
+    ObjectValueName: configValue
+    ParentCommandLine: command
+    ParentProcessName: parentProcName
+    ParentImage: imageName
+    Path: procPath
+    ProcessName: procName
+    Properties: propValue
+    SecurityID: securityId
+    ServiceFileName: serviceFileName
+    ServiceName: serviceName
+    Signature: signatureName
+    StartModule: module
+    Status: status
+    TargetFilename: targetName
+    TargetImage: targetProcName
+    TargetObject: targetOsObjName
+    TicketEncryptionType: encryptAlgo    
+    User: user
+    WorkstationName: computerName

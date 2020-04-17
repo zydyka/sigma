@@ -66,7 +66,7 @@ class SigmaConfigurationChain(list):
                     matching.append(logsource)
                     if logsource.rewrite is not None:
                         category, product, service = logsource.rewrite
-        return SigmaLogsourceConfiguration(matching, self.defaultindex)
+        return SigmaLogsourceConfiguration(matching, self.defaultindex, (category, product, service))
 
     def set_backend(self, backend):
         """Set backend for all sigma conversion configurations in chain."""
@@ -122,7 +122,7 @@ class SigmaConfiguration:
     def get_logsource(self, category, product, service):
         """Return merged log source definition of all logosurces that match criteria"""
         matching = [logsource for logsource in self.logsources if logsource.matches(category, product, service)]
-        return SigmaLogsourceConfiguration(matching, self.defaultindex)
+        return SigmaLogsourceConfiguration(matching, self.defaultindex, (category, product, service))
 
     def set_backend(self, backend):
         """Set backend. This is used by other code to determine target properties for index addressing"""
@@ -142,7 +142,8 @@ class SigmaConfiguration:
 
 class SigmaLogsourceConfiguration:
     """Contains the definition of a log source"""
-    def __init__(self, logsource=None, defaultindex=None):
+    def __init__(self, logsource=None, defaultindex=None, identifier=None):
+        """Initialize log source configuration. Identifier can be derived from log source configuration or porvided explicitely as three element tuple."""
         if logsource == None:               # create empty object
             self.merged = False
             self.category = None
@@ -170,18 +171,21 @@ class SigmaLogsourceConfiguration:
             if len(categories) > 1 or len(products) > 1 or len(services) > 1:
                 raise ValueError("Merged SigmaLogsourceConfigurations must have disjunct categories (%s), products (%s) and services (%s)" % (str(categories), str(products), str(services)))
 
-            try:
-                self.category = categories.pop()
-            except KeyError:
-                self.category = None
-            try:
-                self.product = products.pop()
-            except KeyError:
-                self.product = None
-            try:
-                self.service = services.pop()
-            except KeyError:
-                self.service = None
+            if identifier is not None:
+                self.category, self.product, self.service = identifier
+            else:
+                try:
+                    self.category = categories.pop()
+                except KeyError:
+                    self.category = None
+                try:
+                    self.product = products.pop()
+                except KeyError:
+                    self.product = None
+                try:
+                    self.service = services.pop()
+                except KeyError:
+                    self.service = None
 
             # Merge all index patterns
             self.index = list(set([index for ls in logsource for index in ls.index]))       # unique(flat(logsources.index))
@@ -200,20 +204,24 @@ class SigmaLogsourceConfiguration:
                     or 'product' in logsource and type(logsource['product']) != str \
                     or 'service' in logsource and type(logsource['service']) != str:
                 raise SigmaConfigParseError("Logsource category, product or service must be a string")
-            try:
-                self.category = logsource['category']
-            except KeyError:
-                self.category = None
-            try:
-                self.product = logsource['product']
-            except KeyError:
-                self.product = None
-            try:
-                self.service = logsource['service']
-            except KeyError:
-                self.service = None
-            if self.category == None and self.product == None and self.service == None:
-                raise SigmaConfigParseError("Log source definition will not match")
+
+            if identifier is not None:
+                self.category, self.product, self.service = identifier
+            else:
+                try:
+                    self.category = logsource['category']
+                except KeyError:
+                    self.category = None
+                try:
+                    self.product = logsource['product']
+                except KeyError:
+                    self.product = None
+                try:
+                    self.service = logsource['service']
+                except KeyError:
+                    self.service = None
+                if self.category == None and self.product == None and self.service == None:
+                    raise SigmaConfigParseError("Log source definition will not match")
 
             try:
                 if type(logsource['rewrite']) is not dict:
